@@ -21,36 +21,3 @@ export const churches = [
     descripcion: "Capilla histórica."
   }
 ]
-
-/* 
-{
-    id:1,
-    nombre:"Catedral San Francisco",
-    categoria:"Catedral",
-
-    coordenadas:{
-        lat:-31.42797,
-        lng:-62.08266
-    },
-
-    direccion:"Av. Libertador 120",
-
-    telefono:"3564-xxxxxx",
-
-    horarios:[
-        "08:00",
-        "10:00",
-        "19:30"
-    ],
-
-    descripcion:"...",
-
-    imagenPrincipal:"/images/catedral.jpg",
-
-    galeria:[
-        "/images/catedral1.jpg",
-        "/images/catedral2.jpg",
-        "/images/catedral3.jpg"
-    ]
-}
-*/

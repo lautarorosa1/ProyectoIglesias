@@ -171,7 +171,7 @@ function selectItem(item){
 
   search.value="";
 
-  showResults=false;
+  showResults.value=false;
 
 
 
@@ -194,15 +194,8 @@ function selectItem(item){
 
 .search-control{
 
-  position:absolute;
-
-  top:15px;
-
-  left:15px;
-
-  width:340px;
-
-  z-index:9999;
+  flex:1;
+  min-width:0;
 
 }
 
@@ -211,6 +204,9 @@ function selectItem(item){
 input{
 
   width:100%;
+
+  height:48px;
+  box-sizing:border-box;
 
   padding:13px 16px;
 
@@ -222,7 +218,7 @@ input{
 
   background:white;
 
-  font-size:15px;
+  font-size:16px;
 
 
   box-shadow:
@@ -352,18 +348,11 @@ input{
 
 }
 
-
-
-
-
-@media(max-width:600px){
-
-  .search-control{
-
-    width:calc(100% - 30px);
-
+@media (max-width: 600px) {
+  .search-control {
+    flex: none;
+    width: 180px;
   }
-
 }
 
 
