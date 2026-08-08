@@ -1,0 +1,24 @@
+.church-marker {
+  width: 43px;
+  height: 43px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.church-marker--secondary {
+  width: 70px; 
+  height: 70px;
+}
+
+.church-marker:hover {
+  transform: scale(1.15);
+}
+
+.church-marker img {
+  width: 90%;
+  height: 90%;
+}

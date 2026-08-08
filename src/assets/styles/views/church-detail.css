@@ -1,0 +1,99 @@
+.church-detail {
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 30px;
+
+  background: #f5f7fb;
+}
+
+.church-card {
+  width: 100%;
+  max-width: 450px;
+
+  padding: 30px;
+
+  text-align: center;
+
+  background: white;
+
+  border-radius: 20px;
+
+  border: 1px solid rgba(0,0,0,0.08);
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+.church-icon {
+  width: 70px;
+  height: 70px;
+
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #eef3ff;
+
+  font-size: 35px;
+}
+
+.church-card h1 {
+  margin: 0 0 10px;
+
+  font-size: 28px;
+
+  color: #222;
+}
+
+.church-id {
+  margin-bottom: 20px;
+
+  color: #666;
+
+  font-size: 14px;
+}
+
+.church-info {
+  padding: 15px;
+
+  border-radius: 12px;
+
+  background: #f8fafc;
+
+  color: #555;
+
+  line-height: 1.5;
+}
+
+.church-card button {
+  width: 100%;
+
+  margin-top: 20px;
+
+  padding: 12px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #2563eb;
+
+  color: white;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.church-card button:hover {
+  background: #1d4ed8;
+}
