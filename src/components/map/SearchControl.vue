@@ -40,7 +40,12 @@
       >
 
         <span class="icon">
-          {{item.type==="city" ? "📍" : "⛪"}}
+          <img
+            v-if="item.type === 'church'"
+            :src="item.church?.tipo === 'secundaria' ? churchIcon2 : churchIcon"
+            alt=""
+          />
+          <template v-else>📍</template>
         </span>
 
 
@@ -52,7 +57,7 @@
 
 
           <small>
-            {{item.type==="city" ? "Ciudad" : "Iglesia"}}
+            {{item.type === "city" ? "Ciudad" : `Iglesia - ${item.church?.ciudad ?? ""}`}}
           </small>
 
         </div>
@@ -71,6 +76,8 @@
 
 import {ref,computed} from "vue";
 
+import churchIcon from "@/assets/icons/church-marker.svg";
+import churchIcon2 from "@/assets/icons/church-marker-small.svg";
 
 const props = defineProps({
 
@@ -319,7 +326,29 @@ input{
 
 .icon{
 
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  width:22px;
+
+  height:22px;
+
   font-size:22px;
+
+  flex-shrink:0;
+
+}
+
+.icon img{
+
+  width:100%;
+
+  height:100%;
+
+  object-fit:contain;
 
 }
 

@@ -1,5 +1,5 @@
 .church-popup {
-  width: 240px;
+  width: clamp(200px, 65cqw, 300px);
   padding: 12px;
 
   background: white;

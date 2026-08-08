@@ -9,11 +9,6 @@
   cursor: pointer;
 }
 
-.church-marker--secondary {
-  width: 70px; 
-  height: 70px;
-}
-
 .church-marker:hover {
   transform: scale(1.15);
 }

@@ -36,9 +36,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import * as maplibregl from "maplibre-gl";
-
+import { useRoute, useRouter } from "vue-router";import * as maplibregl from "maplibre-gl";
 import SearchControl from "./SearchControl.vue";
 
 import { churches } from "../../data/churches";
@@ -47,6 +45,7 @@ import sanJustoBoundary from "../../data/sanJustoBoundary.json";
 
 import { createChurchMarker } from "./ChurchMarker";
 
+const route = useRoute();
 const router = useRouter();
 
 const mapContainer = ref(null);
@@ -79,7 +78,7 @@ const searchItems = [
   }))
 ];
 
-const SECONDARY_VISIBLE_ZOOM = 12; // a partir de qué zoom aparecen las secundarias
+const SECONDARY_VISIBLE_ZOOM = 11; // a partir de qué zoom aparecen las secundarias
 
 function updateMarkersVisibility() {
   const currentZoom = map.value.getZoom();
@@ -185,6 +184,36 @@ function clearPrimaryHighlight(church) {
   setSecondariesOpacity(church.id, true); // true = vuelve a opacarse
 }
 
+function highlightSecondaryConnector(church) {
+  if (!map.value?.getSource("connector-lines")) return;
+
+  const parent = churches.find(c => c.id === church.parentId);
+  if (!parent) return;
+
+  map.value.getSource("connector-lines").setData({
+    type: "FeatureCollection",
+    features: [{
+      type: "Feature",
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [church.lng, church.lat],
+          [parent.lng, parent.lat]
+        ]
+      },
+      properties: { secondaryId: church.id, primaryId: parent.id }
+    }]
+  });
+}
+
+function clearConnectorLine() {
+  if (map.value?.getSource("connector-lines")) {
+    map.value
+      .getSource("connector-lines")
+      .setData({ type: "FeatureCollection", features: [] });
+  }
+}
+
 function handleSelection(item) {
   console.log("ITEM SELECCIONADO:", item);
 
@@ -264,6 +293,29 @@ onMounted(() => {
     router.push(`/iglesias/${event.detail}`);
   });
 
+  mapContainer.value.addEventListener(
+    "click",
+    event => {
+      const markerEl = event.target.closest(".church-marker");
+
+      if (markerEl) {
+        let clickedMarker = null;
+        churchMarkers.forEach(marker => {
+          if (marker.getElement() === markerEl) clickedMarker = marker;
+        });
+
+        // Si es el mismo marker del popup activo, dejamos que su propio
+        // toggle se encargue de cerrarlo (no interferimos).
+        if (clickedMarker && clickedMarker.popup === activePopup.value) {
+          return;
+        }
+      }
+
+      closeActivePopup();
+    },
+    true // fase de captura: corre antes que el click interno de maplibre
+  );
+
   map.value = new maplibregl.Map({
     container: mapContainer.value,
     style: "https://api.maptiler.com/maps/streets-v2/style.json?key=YXNpv1WfoxF5DLwD3255",
@@ -324,10 +376,24 @@ onMounted(() => {
     });
 
     sanJustoBounds = getBoundsFromGeoJSON(sanJustoBoundary);
-    map.value.fitBounds(sanJustoBounds, {
-      padding: 55,
-      duration: 0 // sin animación al cargar
-    });
+
+    const targetCityName = route.query.city ?? null;
+    const targetCity = targetCityName
+      ? cities.find(c => c.name === targetCityName)
+      : null;
+
+    if (targetCity) {
+      map.value.jumpTo({
+        center: targetCity.center,
+        zoom: targetCity.zoom
+      });
+      router.replace({ query: {} });
+    } else {
+      map.value.fitBounds(sanJustoBounds, {
+        padding: 55,
+        duration: 0
+      });
+    }
 
     updateMarkersVisibility(); // estado inicial correcto
 
@@ -339,32 +405,34 @@ onMounted(() => {
   });
 
   churches.forEach(church => {
-    const marker = createChurchMarker(map.value, church);
-    churchMarkers.set(church.id, marker);
+  const marker = createChurchMarker(map.value, church, churches);
+  churchMarkers.set(church.id, marker);
 
-    const popup = marker.getPopup();
+  const popup = marker.getPopup();
 
-    popup.on("open", () => {
-      activePopup.value = popup;
+  popup.on("open", () => {
+    activePopup.value = popup;
 
-      if (church.tipo === "principal") {
-        highlightPrimary(church);
-      } else {
-        marker.setOpaque(false); // secundaria seleccionada: se ve completa
-      }
-    });
+    if (church.tipo === "principal") {
+      highlightPrimary(church);
+    } else {
+      marker.setOpaque(false);
+      highlightSecondaryConnector(church);
+    }
+  });
 
-    popup.on("close", () => {
-      if (activePopup.value === popup) {
-        activePopup.value = null;
-      }
+  popup.on("close", () => {
+    if (activePopup.value === popup) {
+      activePopup.value = null;
+    }
 
-      if (church.tipo === "principal") {
-        clearPrimaryHighlight(church);
-      } else {
-        marker.setOpaque(true); // vuelve a opacarse al cerrar
-      }
-    });
+    if (church.tipo === "principal") {
+      clearPrimaryHighlight(church);
+    } else {
+      marker.setOpaque(true);
+      clearConnectorLine();
+    }
+  });
   });
 });
 </script>
@@ -433,6 +501,9 @@ onMounted(() => {
   border: 1px solid var(--color-border);
 
   box-shadow: var(--shadow);
+
+  container-type: inline-size;
+  container-name: map;
 }
 
 .map-inner {
