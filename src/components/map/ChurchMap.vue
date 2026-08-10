@@ -36,100 +36,43 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";import * as maplibregl from "maplibre-gl";
+import { useRoute, useRouter } from "vue-router";
+
 import SearchControl from "./SearchControl.vue";
 
 import { churches } from "../../data/churches";
 import { cities } from "../../data/cities";
-import sanJustoBoundary from "../../data/sanJustoBoundary.json";
 
-import { createChurchMarker } from "./ChurchMarker";
+import { useMapInstance } from "../../composables/useMapInstance";
+import { useChurchMarkers } from "../../composables/useChurchMarkers";
+import { useChurchConnectors } from "../../composables/useChurchConnectors";
+import { useRecentSearches } from "../../composables/useRecentSearches";
+import { useSearchIndex } from "../../composables/useSearchIndex";
 
 const route = useRoute();
 const router = useRouter();
 
-const mapContainer = ref(null);
-const map = ref(null);
 const searchControl = ref(null);
-
-const mapLoading = ref(true);
-
-const churchMarkers = new Map();
-
-const recentSearches = ref([]);
 const activePopup = ref(null);
 
-let sanJustoBounds = null;
+// --- Búsqueda ---
+const { recentSearches, load: loadRecentSearches, save: saveSearch } =
+  useRecentSearches(churches);
+const searchItems = useSearchIndex(cities, churches);
 
-const searchItems = [
-  ...cities.map(city => ({
-    type: "city",
-    name: city.name,
-    center: city.center,
-    zoom: city.zoom
-  })),
-
-  ...churches.map(church => ({
-    type: "church",
-    name: church.nombre,
-    center: [church.lng, church.lat],
-    zoom: 15,
-    church
-  }))
-];
-
-const SECONDARY_VISIBLE_ZOOM = 11; // a partir de qué zoom aparecen las secundarias
-
-function updateMarkersVisibility() {
-  const currentZoom = map.value.getZoom();
-
-  churchMarkers.forEach((marker, churchId) => {
-    const church = churches.find(c => c.id === churchId);
-    const el = marker.getElement();
-
-    if (church.tipo === "principal") {
-      el.style.display = "block";
-      return;
-    }
-
-    // Es secundaria: solo visible si hay suficiente zoom
-    el.style.display = currentZoom >= SECONDARY_VISIBLE_ZOOM ? "block" : "none";
-  });
-}
-
-function loadRecentSearches() {
-  const saved = localStorage.getItem("recentSearches");
-
-  if (saved) {
-    recentSearches.value = JSON.parse(saved);
-  }
-}
-
-function saveSearch(item) {
-  const search = {
-    name: item.name,
-    type: item.type,
-    center: item.center,
-    zoom: item.zoom,
-    church:
-      item.type === "church"
-        ? churches.find(c => c.nombre === item.name)
-        : null
-  };
-
-  recentSearches.value = recentSearches.value.filter(
-    x => x.name !== item.name
-  );
-
-  recentSearches.value.unshift(search);
-
-  recentSearches.value = recentSearches.value.slice(0, 3);
-
-  localStorage.setItem(
-    "recentSearches",
-    JSON.stringify(recentSearches.value)
-  );
-}
+// --- Mapa base ---
+const {
+  mapContainer,
+  map,
+  mapLoading,
+  initMap,
+  resetToSanJusto: resetMapToSanJusto
+} = useMapInstance({
+  cities,
+  route,
+  router,
+  onMapClick: () => searchControl.value?.close()
+});
 
 function closeActivePopup() {
   if (activePopup.value) {
@@ -138,84 +81,39 @@ function closeActivePopup() {
   }
 }
 
-function buildConnectorLines(primaryChurch) {
-  const secundarias = churches.filter(
-    c => c.tipo === "secundaria" && c.parentId === primaryChurch.id
-  );
+// --- Markers y conectores ---
+// Nota sobre el orden: useChurchConnectors necesita el mismo Map de
+// churchMarkers que crea useChurchMarkers, pero useChurchMarkers necesita
+// los callbacks de popup que llaman a los métodos de connectors. Para
+// resolver esa dependencia circular, declaramos `connectors` primero y
+// lo asignamos después de crear los markers; los callbacks solo se
+// ejecutan cuando el usuario abre/cierra un popup (mucho después de que
+// `connectors` ya esté asignado), así que el closure funciona bien.
+let connectors;
 
-  return {
-    type: "FeatureCollection",
-    features: secundarias.map(sec => ({
-      type: "Feature",
-      geometry: {
-        type: "LineString",
-        coordinates: [
-          [sec.lng, sec.lat],
-          [primaryChurch.lng, primaryChurch.lat]
-        ]
-      },
-      properties: { secondaryId: sec.id, primaryId: primaryChurch.id }
-    }))
-  };
-}
-
-function setSecondariesOpacity(parentId, opaque) {
-  churches
-    .filter(c => c.tipo === "secundaria" && c.parentId === parentId)
-    .forEach(c => {
-      churchMarkers.get(c.id)?.setOpaque(opaque);
-    });
-}
-
-function highlightPrimary(church) {
-  if (!map.value?.getSource("connector-lines")) return;
-
-  map.value.getSource("connector-lines").setData(buildConnectorLines(church));
-  setSecondariesOpacity(church.id, false); // false = ya no opaca
-}
-
-function clearPrimaryHighlight(church) {
-  if (map.value?.getSource("connector-lines")) {
-    map.value
-      .getSource("connector-lines")
-      .setData({ type: "FeatureCollection", features: [] });
-  }
-
-  setSecondariesOpacity(church.id, true); // true = vuelve a opacarse
-}
-
-function highlightSecondaryConnector(church) {
-  if (!map.value?.getSource("connector-lines")) return;
-
-  const parent = churches.find(c => c.id === church.parentId);
-  if (!parent) return;
-
-  map.value.getSource("connector-lines").setData({
-    type: "FeatureCollection",
-    features: [{
-      type: "Feature",
-      geometry: {
-        type: "LineString",
-        coordinates: [
-          [church.lng, church.lat],
-          [parent.lng, parent.lat]
-        ]
-      },
-      properties: { secondaryId: church.id, primaryId: parent.id }
-    }]
+const { churchMarkers, createMarkers, updateMarkersVisibility } =
+  useChurchMarkers(map, churches, {
+    onPopupOpen: (church, marker, popup) => {
+      activePopup.value = popup;
+      connectors.handlePopupOpen(church, marker);
+    },
+    onPopupClose: (church, marker, popup) => {
+      if (activePopup.value === popup) {
+        activePopup.value = null;
+      }
+      connectors.handlePopupClose(church, marker);
+    }
   });
-}
 
-function clearConnectorLine() {
-  if (map.value?.getSource("connector-lines")) {
-    map.value
-      .getSource("connector-lines")
-      .setData({ type: "FeatureCollection", features: [] });
-  }
+connectors = useChurchConnectors(map, churchMarkers, churches);
+
+function resetToSanJusto() {
+  searchControl.value?.close();
+  closeActivePopup();
+  resetMapToSanJusto();
 }
 
 function handleSelection(item) {
-  console.log("ITEM SELECCIONADO:", item);
 
   if (!map.value) return;
 
@@ -244,8 +142,6 @@ function handleSelection(item) {
 
   const marker = churchMarkers.get(churchId);
 
-  console.log("MARKER ENCONTRADO:", marker);
-
   if (!marker) {
     console.warn("No existe marker para:", item.church);
     return;
@@ -254,36 +150,7 @@ function handleSelection(item) {
   marker.togglePopup();
 
   // Ya no hace falta setear activePopup acá:
-  // el listener "open" del popup (agregado en onMounted) se encarga de eso.
-}
-
-function getBoundsFromGeoJSON(feature) {
-  const bounds = new maplibregl.LngLatBounds();
-
-  const coords = feature.geometry.coordinates;
-  const type = feature.geometry.type;
-
-  const flat =
-    type === "Polygon"
-      ? coords.flat(1)
-      : coords.flat(2); // MultiPolygon
-
-  flat.forEach(([lng, lat]) => bounds.extend([lng, lat]));
-
-  return bounds;
-}
-
-function resetToSanJusto() {
-  if (!map.value || !sanJustoBounds) return;
-
-  searchControl.value?.close();
-
-  closeActivePopup();
-
-  map.value.fitBounds(sanJustoBounds, {
-    padding: 55,
-    duration: 800
-  });
+  // el callback onPopupOpen (de useChurchMarkers) se encarga de eso.
 }
 
 onMounted(() => {
@@ -316,124 +183,15 @@ onMounted(() => {
     true // fase de captura: corre antes que el click interno de maplibre
   );
 
-  map.value = new maplibregl.Map({
-    container: mapContainer.value,
-    style: "https://api.maptiler.com/maps/streets-v2/style.json?key=YXNpv1WfoxF5DLwD3255",
-    center: [-62.0, -31.3],
-    zoom: window.innerWidth < 768 ? 12 : 13
+  // El callback acá adentro corre en el momento equivalente al que tenía
+  // el código original: dentro del handler "load" del mapa, justo antes
+  // de esperar a "idle" para sacar el overlay de carga.
+  initMap(() => {
+    connectors.addConnectorLinesLayer();
+    updateMarkersVisibility();
   });
 
-  map.value.addControl(new maplibregl.NavigationControl(), "top-right");
-
-  map.value.on("click", () => {
-    searchControl.value?.close();
-  });
-
-  map.value.on("zoom", updateMarkersVisibility);
-
-  map.value.on("load", () => {
-    map.value.addSource("san-justo", {
-      type: "geojson",
-      data: sanJustoBoundary
-    });
-
-    map.value.addLayer({
-      id: "san-justo-fill",
-      type: "fill",
-      source: "san-justo",
-      paint: {
-        "fill-color": "#2563eb",
-        "fill-opacity": 0.06
-      }
-    });
-
-    map.value.addLayer({
-      id: "san-justo-outline",
-      type: "line",
-      source: "san-justo",
-      paint: {
-        "line-color": "#2563eb",
-        "line-width": 2
-      }
-    });
-
-    map.value.addSource("connector-lines", {
-      type: "geojson",
-      data: { type: "FeatureCollection", features: [] }
-    });
-
-    map.value.addLayer({
-      id: "connector-lines-layer",
-      type: "line",
-      source: "connector-lines",
-      layout: { "line-cap": "round" },
-      paint: {
-        "line-color": "#2563eb",
-        "line-width": 2,
-        "line-dasharray": [2, 2],
-        "line-opacity": 0.8
-      }
-    });
-
-    sanJustoBounds = getBoundsFromGeoJSON(sanJustoBoundary);
-
-    const targetCityName = route.query.city ?? null;
-    const targetCity = targetCityName
-      ? cities.find(c => c.name === targetCityName)
-      : null;
-
-    if (targetCity) {
-      map.value.jumpTo({
-        center: targetCity.center,
-        zoom: targetCity.zoom
-      });
-      router.replace({ query: {} });
-    } else {
-      map.value.fitBounds(sanJustoBounds, {
-        padding: 55,
-        duration: 0
-      });
-    }
-
-    updateMarkersVisibility(); // estado inicial correcto
-
-    // Esperamos a que el mapa esté 100% renderizado (tiles + fitBounds)
-    // antes de sacar el overlay de carga
-    map.value.once("idle", () => {
-      mapLoading.value = false;
-    });
-  });
-
-  churches.forEach(church => {
-  const marker = createChurchMarker(map.value, church, churches);
-  churchMarkers.set(church.id, marker);
-
-  const popup = marker.getPopup();
-
-  popup.on("open", () => {
-    activePopup.value = popup;
-
-    if (church.tipo === "principal") {
-      highlightPrimary(church);
-    } else {
-      marker.setOpaque(false);
-      highlightSecondaryConnector(church);
-    }
-  });
-
-  popup.on("close", () => {
-    if (activePopup.value === popup) {
-      activePopup.value = null;
-    }
-
-    if (church.tipo === "principal") {
-      clearPrimaryHighlight(church);
-    } else {
-      marker.setOpaque(true);
-      clearConnectorLine();
-    }
-  });
-  });
+  createMarkers();
 });
 </script>
 

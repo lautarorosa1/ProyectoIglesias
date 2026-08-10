@@ -33,7 +33,7 @@
 
       <div
         v-for="item in displayedItems"
-        :key="item.type + item.name"
+        :key="item.type === 'church' ? `church-${item.church.id}` : `city-${item.name}`"
         class="result-item"
         :class="{recent:!search}"
         @click="selectItem(item)"

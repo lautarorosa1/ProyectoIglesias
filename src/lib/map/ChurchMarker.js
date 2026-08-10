@@ -1,7 +1,7 @@
 import { createApp } from "vue";
 import * as maplibregl from "maplibre-gl";
 
-import ChurchPopup from "./ChurchPopup.vue";
+import ChurchPopup from "../../components/map/ChurchPopup.vue";
 import churchIcon from "@/assets/icons/church-marker.svg";
 import churchIcon2 from "@/assets/icons/church-marker-small.svg";
 
