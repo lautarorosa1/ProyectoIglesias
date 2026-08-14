@@ -264,4 +264,188 @@ export const churches = [
     lng: -63.3423223537855,
     descripcion: ""
   },
+  {
+    id: 28,
+    nombre: "Iglesia San Miguel Arcangel",
+    tipo: "principal",
+    ciudad: "Sacanta",
+    lat: -31.663529916914204, 
+    lng: -63.04703115822739,
+    descripcion: ""
+  },
+  {
+    id: 29,
+    nombre: "Iglesia San Alberto",
+    tipo: "secundaria",
+    parentId: 28,
+    ciudad: "El Arañado",
+    lat: -31.74241911039384, 
+    lng: -62.88912983053424,
+    descripcion: ""
+  },
+  {
+    id: 30,
+    nombre: "Iglesia Santa Teresa de Jesus",
+    tipo: "principal",
+    ciudad: "Calchin",
+    lat: -31.66922783442895, 
+    lng: -63.199871652703195,
+    descripcion: ""
+  },
+  {
+    id: 31,
+    nombre: "Iglesia Santo Domingo de Guzman",
+    tipo: "principal",
+    ciudad: "Laspiur",
+    lat: -31.702923596235387,
+    lng: -62.481753815870675,
+    descripcion: ""
+  },
+  {
+    id: 32,
+    nombre: "Iglesia Virgen Niña",
+    tipo: "secundaria",
+    parentId: 31,
+    ciudad: "Colonia Prosperidad",
+    lat: -31.627995595373736, 
+    lng: -62.36539740273417,
+    descripcion: ""
+  },
+  {
+    id: 33,
+    nombre: "Iglesia San Juan Bautista",
+    tipo: "secundaria",
+    parentId: 31,
+    ciudad: "Las Varas",
+    lat: -31.802784824723926, 
+    lng: -62.61604036176118,
+    descripcion: ""
+  },
+  {
+    id: 34,
+    nombre: "Iglesia San Miguel de Arcangel",
+    tipo: "secundaria",
+    parentId: 31,
+    ciudad: "Alicia",
+    lat: -31.93997367602217, 
+    lng: -62.46744139663063,
+    descripcion: ""
+  },
+  {
+    id: 35,
+    nombre: "Iglesia Santa Margarita de Escocia",
+    tipo: "secundaria",
+    parentId: 31,
+    ciudad: "El Fortin",
+    lat: -31.97258275696469, 
+    lng: -62.30079790420729,
+    descripcion: ""
+  },
+  {
+    id: 36,
+    nombre: "Instituto Diocesano",
+    tipo: "principal",
+    ciudad: "Las Varillas",
+    lat: -31.86998664439091, 
+    lng: -62.71855501588714,
+    descripcion: ""
+  },
+  {
+    id: 37,
+    nombre: "Iglesia Nuestra Señora de la Asuncion",
+    tipo: "principal",
+    ciudad: "Morteros",
+    lat: -30.71176862304758, 
+    lng: -61.99544721166623,
+    descripcion: ""
+  },
+  {
+    id: 38,
+    nombre: "Iglesia Santa Felicita",
+    tipo: "secundaria",
+    parentId: 37,
+    ciudad: "Colonia 10 de Julio",
+    lat: -30.52534141462098, 
+    lng: -62.112046071413104,
+    descripcion: ""
+  },
+  {
+    id: 39,
+    nombre: "Iglesia San Pedro",
+    tipo: "secundaria",
+    parentId: 37,
+    ciudad: "Colonia San Pedro",
+    lat: -30.783532494312386, 
+    lng: -61.917572269865936,
+    descripcion: ""
+  },
+  {
+    id: 40,
+    nombre: "Iglesia Nuestra Señora del Rosario",
+    tipo: "principal",
+    ciudad: "Freyre",
+    lat: -31.165119907984682, 
+    lng: -62.0951353536104 ,
+    descripcion: ""
+  },
+  {
+    id: 41,
+    nombre: "Iglesia San Cayetano",
+    tipo: "secundaria",
+    parentId: 40,
+    ciudad: "Freyre",
+    lat: -31.16342469219581, 
+    lng: -62.10195251880488,
+    descripcion: ""
+  },
+  {
+    id: 42,
+    nombre: "Iglesia Santa Ana",
+    tipo: "secundaria",
+    parentId: 40,
+    ciudad: "Colonia Anita",
+    lat: -31.11909731918857, 
+    lng: -62.23507502121179,
+    descripcion: ""
+  },
+  {
+    id: 43,
+    nombre: "Iglesia San Pedro y San Pablo",
+    tipo: "secundaria",
+    parentId: 40,
+    ciudad: "Colonia Iturraspe",
+    lat: -31.20694480408374, 
+    lng: -62.111203011788106,
+    descripcion: ""
+  },
+  {
+    id: 44,
+    nombre: "Iglesia San Isidro Labrador",
+    tipo: "principal",
+    ciudad: "Porteña",
+    lat: -31.014741715804455, 
+    lng: -62.06203246596553,
+    descripcion: ""
+  },
+  {
+    id: 45,
+    nombre: "Iglesia Nuestra Señora de Fatima",
+    tipo: "secundaria",
+    parentId: 44,
+    ciudad: "Porteña",
+    lat: -31.013358320087125, 
+    lng: -62.073292446011926,
+    descripcion: ""
+  },
+  {
+    id: 46,
+    nombre: "Iglesia Virgen Niña",
+    tipo: "secundaria",
+    parentId: 44,
+    ciudad: "Colonia Baltelina",
+    lat: -31.053323227303444, 
+    lng: -62.234657743392916,
+    descripcion: ""
+  },
+
 ]
