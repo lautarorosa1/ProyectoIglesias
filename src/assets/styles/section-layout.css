@@ -1,0 +1,64 @@
+/* Layout base compartido por todas las secciones de la home
+   (y potencialmente otras vistas: contacto, etc.) */
+
+.section {
+  padding: clamp(56px, 8vw, 96px) 0;
+}
+.section-light { background: var(--dio-white); }
+.section-gray { background: var(--dio-stone-50); }
+.section-deep {
+  background: linear-gradient(160deg, var(--dio-primary-900), var(--dio-primary-700));
+  color: var(--dio-white);
+}
+
+.section-inner {
+  width: 100%;
+  max-width: var(--container-width, 1180px);
+  margin: 0 auto;
+  padding: 0 var(--space-md, 20px);
+}
+
+.section-head { text-align: center; margin-bottom: 40px; }
+
+.section-title {
+  position: relative;
+  font-family: var(--dio-font-display);
+  font-weight: 700;
+  font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+  text-align: center;
+  margin: 0 0 26px;
+  padding-bottom: 18px;
+  letter-spacing: -0.01em;
+  color: var(--dio-primary-900);
+}
+.section-title::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--dio-gold), var(--dio-gold-soft));
+}
+
+.section-subtitle { text-align: center; color: var(--dio-ink-600); font-size: 1.05rem; margin: 0; }
+
+.section-lead {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 48px;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.data-note {
+  text-align: center;
+  margin-top: 28px;
+  font-size: 0.8rem;
+  color: var(--dio-ink-600);
+  font-style: italic;
+}
+.data-note--light { color: rgba(255, 255, 255, 0.65); }

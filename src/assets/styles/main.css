@@ -3,4 +3,7 @@
 @import "./components/marker.css";
 @import "./components/popup.css";
 @import "./views/church-detail.css";
-@import "./views/home.css"
+@import "./diocesis-tokens.css";
+@import "./buttons.css";
+@import "./animations-scroll-reveal.css";
+@import "./section-layout.css";

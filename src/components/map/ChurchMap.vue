@@ -43,11 +43,11 @@ import SearchControl from "./SearchControl.vue";
 import { churches } from "../../data/churches";
 import { cities } from "../../data/cities";
 
-import { useMapInstance } from "../../composables/useMapInstance";
-import { useChurchMarkers } from "../../composables/useChurchMarkers";
-import { useChurchConnectors } from "../../composables/useChurchConnectors";
-import { useRecentSearches } from "../../composables/useRecentSearches";
-import { useSearchIndex } from "../../composables/useSearchIndex";
+import { useMapInstance } from "../../composables/map/useMapInstance";
+import { useChurchMarkers } from "../../composables/map/useChurchMarkers.js";
+import { useChurchConnectors } from "../../composables/map/useChurchConnectors";
+import { useRecentSearches } from "../../composables/map/useRecentSearches";
+import { useSearchIndex } from "../../composables/map/useSearchIndex";
 
 const route = useRoute();
 const router = useRouter();

@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import * as maplibregl from "maplibre-gl";
 
-import sanJustoBoundary from "../data/sanJustoBoundary.json";
+import sanJustoBoundary from "../../data/sanJustoBoundary.json";
 
 // TODO: mover a variable de entorno (import.meta.env.VITE_MAPTILER_KEY)
 // en vez de tenerla hardcodeada acá. La dejamos igual por ahora para

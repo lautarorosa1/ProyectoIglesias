@@ -1,5 +1,4 @@
-import { createChurchMarker } from "../lib/map/ChurchMarker";
-
+import { createChurchMarker } from "../../lib/map/ChurchMarker";
 const SECONDARY_VISIBLE_ZOOM = 11; // a partir de qué zoom aparecen las secundarias
 
 /**

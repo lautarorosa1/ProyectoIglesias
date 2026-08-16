@@ -1,0 +1,14 @@
+:root {
+  --dio-primary-900: #3a1220;
+  --dio-primary-700: #6d2436;
+  --dio-primary-500: #a04a58;
+  --dio-white: #fffdfb;
+  --dio-stone-50: #f6f1e8;
+  --dio-stone-200: #e7dccb;
+  --dio-ink-600: #6e6156;
+  --dio-gold: #b3823a;
+  --dio-gold-soft: #d9b673;
+
+  --dio-font-display: "Fraunces", "Georgia", serif;
+  --dio-font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
