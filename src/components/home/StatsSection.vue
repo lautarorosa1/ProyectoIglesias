@@ -17,13 +17,28 @@
           <span class="stat-label">{{ stat.label }}</span>
         </div>
       </div>
-      <p class="data-note data-note--light">Valores de ejemplo, editables en diocesis.data.js.</p>
     </div>
   </section>
 </template>
 
 <script setup>
-import { diocesisStats } from "@/data/diocesis.data.js";
+import { computed } from "vue";
+import { churches } from "../../data/churches";
+import { cities } from "../../data/cities";
+
+const diocesisStats = computed(() => {
+  const totalComunidades = churches.length;
+  const parroquias = churches.filter((c) => c.tipo === "principal").length;
+  const capillas = churches.filter((c) => c.tipo === "secundaria").length; //toma las iglesias secundarias como capillas
+  const localidades = cities.length;
+
+  return [
+    { key: "comunidades", value: totalComunidades, label: "Comunidades" },
+    { key: "parroquias", value: parroquias, label: "Parroquias" },
+    { key: "capillas", value: capillas, label: "Capillas" },
+    { key: "localidades", value: localidades, label: "Localidades" },
+  ];
+});
 </script>
 
 <style scoped>

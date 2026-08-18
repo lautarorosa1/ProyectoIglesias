@@ -1,10 +1,11 @@
+<!-- src/views/AgendaView.vue -->
 <template>
-  <section id="agenda" class="section section-gray">
+  <section class="section">
     <div class="section-inner">
       <div class="section-head">
-        <h2 class="section-title" v-reveal>Hoy en nuestra Iglesia</h2>
+        <h1 class="section-title" v-reveal>Agenda de la Diócesis</h1>
         <p class="section-subtitle" v-reveal>
-          Lo que se vive en la Diócesis, día a día.
+          Todos los próximos eventos de nuestra comunidad.
         </p>
       </div>
 
@@ -31,22 +32,15 @@
           <p class="agenda-description">{{ event.description }}</p>
         </article>
       </div>
-
-      <div class="agenda-cta" v-reveal>
-        <RouterLink to="/agenda" class="btn btn-outline">
-          Ver todos los eventos
-        </RouterLink>
-      </div>
     </div>
   </section>
 </template>
 
 <script setup>
 import { onMounted } from "vue";
-import { RouterLink } from "vue-router";
 import { useGoogleCalendar } from "@/composables/useGoogleCalendar.js";
 
-const { agenda, loading, error, fetchAgenda } = useGoogleCalendar(3); // solo 3 eventos en Home
+const { agenda, loading, error, fetchAgenda } = useGoogleCalendar(50); // traé más eventos acá
 onMounted(fetchAgenda);
 </script>
 
@@ -82,13 +76,22 @@ onMounted(fetchAgenda);
 .agenda-place { font-size: 0.88rem; color: var(--dio-primary-700); margin: 0 0 10px; }
 .agenda-description { font-size: 0.9rem; color: var(--dio-ink-600); line-height: 1.5; margin: 0; }
 
-.agenda-cta {
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
+.agenda-loading,
+.agenda-error,
+.agenda-empty {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 1rem;
+  color: var(--dio-ink-600);
+}
+.agenda-error {
+  color: var(--dio-primary-700);
 }
 
 @media (max-width: 1024px) {
   .agenda-grid { grid-template-columns: 1fr; }
+}
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .agenda-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>

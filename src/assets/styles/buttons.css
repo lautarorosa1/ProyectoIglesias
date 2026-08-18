@@ -36,3 +36,15 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 .btn-light:hover { transform: translateY(-2px); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--dio-primary-700);
+  border-color: var(--dio-primary-500);
+}
+.btn-outline:hover {
+  background: var(--dio-primary-500);
+  color: var(--dio-white);
+  box-shadow: 0 10px 24px rgba(58, 18, 32, 0.15);
+  transform: translateY(-2px);
+}

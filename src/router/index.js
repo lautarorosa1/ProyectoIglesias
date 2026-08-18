@@ -36,6 +36,11 @@ const router = createRouter({
       name: "church-detail",
       component: ChurchDetailView,
     },
+    {
+      path: "/agenda",
+      name: "agenda",
+      component: () => import("@/views/AgendaView.vue"),
+    },
   ],
 });
 
