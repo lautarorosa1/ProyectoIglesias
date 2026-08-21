@@ -447,5 +447,108 @@ export const churches = [
     lng: -62.234657743392916,
     descripcion: ""
   },
+  {
+    id: 47,
+    nombre: "Iglesia San Juan Bautista",
+    tipo: "principal",
+    ciudad: "Brinkmann",
+    lat: -30.86624715258642, 
+    lng: -62.04379061236517,
+    descripcion: ""
+  },
+  {
+    id: 48,
+    nombre: "Iglesia San Cayetano",
+    tipo: "secundaria",
+    parentId: 47,
+    ciudad: "Brinkmann",
+    lat: -30.869019174510726, 
+    lng: -62.027588268802326,
+    descripcion: ""
+  },
+  {
+    id: 49,
+    nombre: "Iglesia Sagrado Corazon de Jesus",
+    tipo: "secundaria",
+    parentId: 47,
+    ciudad: "Colonia Vignaud",
+    lat: -30.840635682709987, 
+    lng: -61.95671279268432,
+    descripcion: ""
+  },
+  {
+    id: 50,
+    nombre: "Iglesia San Pantaleon",
+    tipo: "secundaria",
+    parentId: 47,
+    ciudad: "Seeber",
+    lat: -30.925800771188158, 
+    lng: -61.9741927430005,
+    descripcion: ""
+  },
+  {
+    id: 51,
+    nombre: "Iglesia San Eduardo Rey",
+    tipo: "principal",
+    ciudad: "Altos de Chipion",
+    lat: -30.958518944417484,
+    lng: -62.336859644945946,
+    descripcion: ""
+  },
+  {
+    id: 52,
+    nombre: "Iglesia Santo Tomas de Aquino",
+    tipo: "secundaria",
+    parentId: 51,
+    ciudad: "La Paquita",
+    lat: -30.908692170530408, 
+    lng: -62.21741282146983,
+    descripcion: ""
+  },
+  {
+    id: 53,
+    nombre: "Iglesia Inmaculada Concepcion",
+    tipo: "principal",
+    ciudad: "Villa Concepcion del Tio",
+    lat: -31.322545284180944, 
+    lng: -62.813164248801144,
+    descripcion: ""
+  },
+  {
+    id: 54,
+    nombre: "Iglesia Nuestra Señora de la Asuncion",
+    tipo: "principal",
+    ciudad: "Marull",
+    lat: -30.99424390600042, 
+    lng: -62.82613332474506,
+    descripcion: ""
+  },
+  {
+    id: 55,
+    nombre: "Iglesia Nuestra Señora de la Merced",
+    tipo: "principal",
+    ciudad: "Arroyito",
+    lat: -31.41935190566354, 
+    lng: -63.05161528525558,
+    descripcion: ""
+  },
+  {
+    id: 56,
+    nombre: "Iglesia San Jose",
+    tipo: "principal",
+    ciudad: "Devoto",
+    lat: -31.401716920698295, 
+    lng: -62.30753903310568,
+    descripcion: ""
+  },
+  {
+    id: 57,
+    nombre: "Iglesia Nuestra Señora de la Merced",
+    tipo: "principal",
+    ciudad: "La Francia",
+    lat: -31.407097673781763, 
+    lng: -62.63357118152252,
+    descripcion: ""
+  },
 
 ]
