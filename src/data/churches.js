@@ -249,7 +249,7 @@ export const churches = [
     nombre: "Iglesia Santa Rosa de Lima",
     tipo: "secundaria",
     parentId: 25,
-    ciudad: "Luque",
+    ciudad: "Calchin Oeste",
     lat: -31.86231129180364, 
     lng: -63.27656678481031,
     descripcion: ""
@@ -548,6 +548,51 @@ export const churches = [
     ciudad: "La Francia",
     lat: -31.407097673781763, 
     lng: -62.63357118152252,
+    descripcion: ""
+  },
+  {
+    id: 58,
+    nombre: "Iglesia San Bartolome",
+    tipo: "principal",
+    ciudad: "Colonia San Bartolome",
+    lat: -31.528899710109062, 
+    lng: -62.72382142034856 ,
+    descripcion: ""
+  },
+  {
+    id: 59,
+    nombre: "Iglesia San Jose",
+    tipo: "principal",
+    ciudad: "Balnearia",
+    lat: -31.012994097576364, 
+    lng: -62.66468501140322,
+    descripcion: ""
+  },
+  {
+    id: 60,
+    nombre: "Iglesia Santa Teresa del Niño Jesus",
+    tipo: "principal",
+    ciudad: "Miramar",
+    lat: -30.914520592368238, 
+    lng: -62.67556930060598,
+    descripcion: ""
+  },
+  {
+    id: 61,
+    nombre: "Iglesia Transito de Nuestra Señora",
+    tipo: "principal",
+    ciudad: "Villa del Transito",
+    lat: -31.448723306778582, 
+    lng: -63.19400125710536,
+    descripcion: ""
+  },
+  {
+    id: 62,
+    nombre: "Iglesia San Antonio de Padua",
+    tipo: "principal",
+    ciudad: "Santiago Temple",
+    lat: -31.39260471979685, 
+    lng: -63.41907413570812,
     descripcion: ""
   },
 

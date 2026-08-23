@@ -42,6 +42,7 @@ const currentYear = new Date().getFullYear();
   justify-content: space-between;
   gap: 24px;
 }
+
 .footer-title { font-family: var(--dio-font-display); font-size: 1.15rem; margin: 0 0 6px; color: var(--dio-white); }
 .footer-tagline { font-size: 0.85rem; max-width: 280px; color: rgba(255, 255, 255, 0.65); margin: 0; }
 .footer-links { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }

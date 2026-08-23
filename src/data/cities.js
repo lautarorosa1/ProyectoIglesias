@@ -159,4 +159,29 @@ export const cities = [
     center: [-62.63442222115859, -31.4066222972835],
     zoom: 14,
   },
+  {
+    name: "Colonia San Bartolome",
+    center: [-62.72428203519002, -31.528293773385347],
+    zoom: 15,
+  },
+  {
+    name: "Balnearia",
+    center: [-62.667634190313464, -31.00994033737759],
+    zoom: 14,
+  },
+  {
+    name: "Miramar",
+    center: [-62.674638448357285, -30.916629423209734],
+    zoom: 14,
+  },
+  {
+    name: "Villa del Transito",
+    center: [-63.19451975891918, -31.44815155828368],
+    zoom: 15,
+  },
+  {
+    name: "Santiago Temple",
+    center: [-63.41758751535957, -31.38797538414932],
+    zoom: 15,
+  },
 ];

@@ -10,6 +10,9 @@
  * @param {Map} churchMarkers - Map<churchId, marker> (de useChurchMarkers)
  * @param {Array} churches - lista completa de iglesias
  */
+
+import { SECONDARY_VISIBLE_ZOOM } from "./constants"
+
 export function useChurchConnectors(map, churchMarkers, churches) {
   function addConnectorLinesLayer() {
     map.value.addSource("connector-lines", {
@@ -21,6 +24,7 @@ export function useChurchConnectors(map, churchMarkers, churches) {
       id: "connector-lines-layer",
       type: "line",
       source: "connector-lines",
+      minzoom: SECONDARY_VISIBLE_ZOOM, // <-- clave: la layer no se renderiza por debajo de este zoom
       layout: { "line-cap": "round" },
       paint: {
         "line-color": "#2563eb",

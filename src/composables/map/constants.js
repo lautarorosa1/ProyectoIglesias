@@ -1,0 +1,1 @@
+export const SECONDARY_VISIBLE_ZOOM = 8; // a partir de qué zoom aparecen las secundarias - tambien lo uso en connectors

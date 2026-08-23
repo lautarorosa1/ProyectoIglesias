@@ -1,5 +1,5 @@
 import { createChurchMarker } from "../../lib/map/ChurchMarker";
-const SECONDARY_VISIBLE_ZOOM = 11; // a partir de qué zoom aparecen las secundarias
+import { SECONDARY_VISIBLE_ZOOM } from "./constants"
 
 /**
  * Crea los markers de iglesias sobre el mapa y controla su visibilidad
