@@ -7,7 +7,7 @@
     <TimelineSection />
     <BishopSection />
     <LookingForSection />
-    <MapInviteSection :map-route="mapRoute" />
+    <ChurchMap />
   </main>
 </template>
 
@@ -18,8 +18,8 @@ import AgendaSection from "@/components/home/AgendaSection.vue";
 import StatsSection from "@/components/home/StatsSection.vue";
 import TimelineSection from "@/components/home/TimelineSection.vue";
 import BishopSection from "@/components/home/BishopSection.vue";
+import ChurchMap from "@/components/map/ChurchMap.vue";
 import LookingForSection from "@/components/home/LookingForSection.vue";
-import MapInviteSection from "@/components/home/MapInviteSection.vue";
 
 const mapRoute = { name: "map" };
 </script>

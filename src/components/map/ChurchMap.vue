@@ -1,37 +1,46 @@
 <template>
-  <div class="map-wrapper">
-    <div class="controls-row">
-      <SearchControl
-        ref="searchControl"
-        :items="searchItems"
-        :recent="recentSearches"
-        @select="handleSelection"
-        @focus="closeActivePopup"
-      />
-
-      <button
-        type="button"
-        class="reset-button"
-        aria-label="Volver a San Justo"
-        title="Volver a San Justo"
-        @click="resetToSanJusto"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9.5 12 3l9 6.5" />
-          <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
-        </svg>
-      </button>
+  <section class="church-map-section">
+    <div class="church-map-head">
+      <h1>Mapa de comunidades</h1>
+      <p>Explorá las parroquias, iglesias y comunidades de la Diócesis de San Francisco.</p>
     </div>
 
-    <div class="map-container" :class="{ 'is-loading': mapLoading }">
-      <div v-if="mapLoading" class="map-loading-overlay">
-        <div class="spinner"></div>
-        <p>Cargando mapa...</p>
+    <div class="map-card">
+      <div class="map-wrapper">
+        <div class="controls-row">
+          <SearchControl
+            ref="searchControl"
+            :items="searchItems"
+            :recent="recentSearches"
+            @select="handleSelection"
+            @focus="closeActivePopup"
+          />
+
+          <button
+            type="button"
+            class="reset-button"
+            aria-label="Volver a San Justo"
+            title="Volver a San Justo"
+            @click="resetToSanJusto"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9.5 12 3l9 6.5" />
+              <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="map-container" :class="{ 'is-loading': mapLoading }">
+          <div v-if="mapLoading" class="map-loading-overlay">
+            <div class="spinner"></div>
+            <p>Cargando mapa...</p>
+          </div>
+
+          <div ref="mapContainer" class="map-inner"></div>
+        </div>
       </div>
-
-      <div ref="mapContainer" class="map-inner"></div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -196,6 +205,55 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Reutiliza los mismos tokens de layout que HomeView (--container-width,
+   --space-*) para mantener consistencia visual si se integra ahí. */
+.church-map-section {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+
+  background: var(--dio-stone-200);
+  padding: 48px 24px;
+}
+
+.church-map-head,
+.map-card {
+  max-width: var(--container-width, 1180px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.church-map-head {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.church-map-head h1 {
+  margin: 0 0 10px;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  color: var(--dio-primary-900);
+}
+
+.church-map-head p {
+  max-width: 560px;
+  margin: 0 auto;
+  color: var(--dio-primary-900);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.map-card {
+  padding: 12px;
+  background: var(--dio-white);
+  border-radius: 24px;
+  border: 1px solid var(--dio-stone-200);
+  box-shadow: 0 10px 30px rgba(58, 18, 32, 0.15);
+}
+
 .map-wrapper {
   position: relative;
 }
@@ -233,16 +291,16 @@ onMounted(() => {
 
   border-radius: 12px;
   border: 0;
-  background: white;
+  background: var(--dio-white);
 
   cursor: pointer;
   transition: background 0.15s ease;
 
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 15px rgba(58, 18, 32, 0.18);
 }
 
 .reset-button:hover {
-  background: #f5f5f5;
+  background: var(--dio-stone-50);
 }
 
 .map-container {
@@ -256,7 +314,7 @@ onMounted(() => {
   border-radius: var(--radius);
   overflow: hidden;
 
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--dio-stone-200);
 
   box-shadow: var(--shadow);
 
@@ -268,6 +326,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
 
+  background: var(--dio-stone-50);
   opacity: 0;
   transition: opacity 0.35s ease;
 }
@@ -287,8 +346,8 @@ onMounted(() => {
   justify-content: center;
   gap: 12px;
 
-  background: #f5f5f5;
-  color: #666;
+  background: var(--dio-stone-50);
+  color: var(--dio-ink-600);
   font-size: 14px;
 }
 
@@ -296,8 +355,8 @@ onMounted(() => {
   width: 32px;
   height: 32px;
 
-  border: 3px solid #ddd;
-  border-top-color: #2563eb;
+  border: 3px solid var(--dio-stone-200);
+  border-top-color: var(--dio-gold);
   border-radius: 50%;
 
   animation: spin 0.8s linear infinite;
@@ -310,8 +369,15 @@ onMounted(() => {
 }
 
 @media (max-width: 600px) {
-  .controls-row {
-    width: calc(100% - 30px);
+  .church-map-section {
+    padding: 32px 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-card {
+    padding: 8px;
+    border-radius: 18px;
   }
 }
 </style>

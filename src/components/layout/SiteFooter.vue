@@ -10,7 +10,6 @@
         <RouterLink :to="{ name: 'home', hash: '#movimiento' }">La Diócesis</RouterLink>
         <RouterLink :to="{ name: 'home', hash: '#agenda' }">Agenda</RouterLink>
         <RouterLink :to="{ name: 'home', hash: '#historia' }">Historia</RouterLink>
-        <RouterLink :to="{ name: 'map' }">Mapa de comunidades</RouterLink>
         <RouterLink to="/contacto">Contacto</RouterLink>
       </nav>
 

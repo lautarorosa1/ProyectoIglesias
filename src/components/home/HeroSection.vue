@@ -13,9 +13,7 @@
         <button class="btn btn-primary" @click="scrollToId('movimiento')">
           Conocé la Diócesis
         </button>
-        <RouterLink :to="mapRoute" class="btn btn-ghost">
-          Encontrá tu comunidad
-        </RouterLink>
+        
       </div>
     </div>
 
