@@ -11,9 +11,11 @@ const router = createRouter({
     if (savedPosition) {
       return savedPosition;
     }
-    // Link con hash (ej: /#agenda): scroll suave al elemento
+    // Link con hash (ej: /#agenda): scroll suave al elemento,
+    // excepto al volver desde el detalle de iglesia, que salta directo
     if (to.hash) {
-      return { el: to.hash, behavior: "smooth" };
+      const instant = from.name === "church-detail";
+      return { el: to.hash, behavior: instant ? "auto" : "smooth" };
     }
     // Cualquier otra navegación: arrancar arriba de la página
     return { top: 0 };

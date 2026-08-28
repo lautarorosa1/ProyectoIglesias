@@ -5,16 +5,15 @@ import { SECONDARY_VISIBLE_ZOOM } from "./constants"
  * Crea los markers de iglesias sobre el mapa y controla su visibilidad
  * según el zoom (las secundarias solo se muestran a partir de cierto nivel).
  *
- * No conoce connector-lines ni highlight: eso se resuelve afuera via
- * los callbacks onPopupOpen / onPopupClose.
+ * No conoce sidebar ni connector-lines: eso se resuelve afuera via
+ * el callback onMarkerClick.
  *
  * @param {import('vue').Ref} map - ref al mapa de maplibre (de useMapInstance)
  * @param {Array} churches - lista completa de iglesias
  * @param {Object} [callbacks]
- * @param {Function} [callbacks.onPopupOpen] - (church, marker, popup) => void
- * @param {Function} [callbacks.onPopupClose] - (church, marker, popup) => void
+ * @param {Function} [callbacks.onMarkerClick] - (church, marker) => void
  */
-export function useChurchMarkers(map, churches, { onPopupOpen, onPopupClose } = {}) {
+export function useChurchMarkers(map, churches, { onMarkerClick } = {}) {
   const churchMarkers = new Map();
 
   function updateMarkersVisibility() {
@@ -37,23 +36,18 @@ export function useChurchMarkers(map, churches, { onPopupOpen, onPopupClose } = 
   }
 
   /**
-   * Crea todos los markers y los deja listos (incluye listeners de
-   * popup y de zoom). Llamar justo después de que map.value exista
+   * Crea todos los markers y los deja listos (incluye listener de
+   * click y de zoom). Llamar justo después de que map.value exista
    * (no hace falta esperar al evento "load" del mapa).
    */
   function createMarkers() {
     churches.forEach(church => {
-      const marker = createChurchMarker(map.value, church, churches);
+      const marker = createChurchMarker(map.value, church);
       churchMarkers.set(church.id, marker);
 
-      const popup = marker.getPopup();
-
-      popup.on("open", () => {
-        onPopupOpen?.(church, marker, popup);
-      });
-
-      popup.on("close", () => {
-        onPopupClose?.(church, marker, popup);
+      marker.getElement().addEventListener("click", event => {
+        event.stopPropagation();
+        onMarkerClick?.(church, marker);
       });
     });
 

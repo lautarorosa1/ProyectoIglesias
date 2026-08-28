@@ -1,9 +1,9 @@
 /**
  * Maneja la fuente/layer "connector-lines" (las líneas punteadas entre
  * una iglesia principal y sus secundarias) y el highlight que se activa
- * al abrir un popup.
+ * al seleccionar una iglesia (mostrarla en la sidebar).
  *
- * Expone handlePopupOpen / handlePopupClose, pensados para pasarse
+ * Expone handleSelect / handleDeselect, pensados para pasarse
  * directamente como callbacks a useChurchMarkers.
  *
  * @param {import('vue').Ref} map - ref al mapa de maplibre (de useMapInstance)
@@ -24,7 +24,7 @@ export function useChurchConnectors(map, churchMarkers, churches) {
       id: "connector-lines-layer",
       type: "line",
       source: "connector-lines",
-      minzoom: SECONDARY_VISIBLE_ZOOM, // <-- clave: la layer no se renderiza por debajo de este zoom
+      minzoom: SECONDARY_VISIBLE_ZOOM,
       layout: { "line-cap": "round" },
       paint: {
         "line-color": "#2563eb",
@@ -68,7 +68,7 @@ export function useChurchConnectors(map, churchMarkers, churches) {
     if (!map.value?.getSource("connector-lines")) return;
 
     map.value.getSource("connector-lines").setData(buildConnectorLines(church));
-    setSecondariesOpacity(church.id, false); // false = ya no opaca
+    setSecondariesOpacity(church.id, false);
   }
 
   function clearPrimaryHighlight(church) {
@@ -78,7 +78,7 @@ export function useChurchConnectors(map, churchMarkers, churches) {
         .setData({ type: "FeatureCollection", features: [] });
     }
 
-    setSecondariesOpacity(church.id, true); // true = vuelve a opacarse
+    setSecondariesOpacity(church.id, true);
   }
 
   function highlightSecondaryConnector(church) {
@@ -115,7 +115,7 @@ export function useChurchConnectors(map, churchMarkers, churches) {
 
   // --- Callbacks para engancharse a useChurchMarkers ---
 
-  function handlePopupOpen(church, marker) {
+  function handleSelect(church, marker) {
     if (church.tipo === "principal") {
       highlightPrimary(church);
     } else {
@@ -124,18 +124,20 @@ export function useChurchConnectors(map, churchMarkers, churches) {
     }
   }
 
-  function handlePopupClose(church, marker) {
+  function handleDeselect(church, marker) {
+    if (!church) return;
+
     if (church.tipo === "principal") {
       clearPrimaryHighlight(church);
     } else {
-      marker.setOpaque(true);
+      marker?.setOpaque(true);
       clearConnectorLine();
     }
   }
 
   return {
     addConnectorLinesLayer,
-    handlePopupOpen,
-    handlePopupClose
+    handleSelect,
+    handleDeselect
   };
 }

@@ -53,26 +53,26 @@ export function useMapInstance({ cities, route, router, onMapClick }) {
   }
 
   function setInitialView() {
-    sanJustoBounds = getBoundsFromGeoJSON(sanJustoBoundary);
+  sanJustoBounds = getBoundsFromGeoJSON(sanJustoBoundary);
 
-    const targetCityName = route.query.city ?? null;
-    const targetCity = targetCityName
-      ? cities.find(c => c.name === targetCityName)
-      : null;
+  const targetCityName = route.query.city ?? null;
+  const targetCity = targetCityName
+    ? cities.find(c => c.name === targetCityName)
+    : null;
 
-    if (targetCity) {
-      map.value.jumpTo({
-        center: targetCity.center,
-        zoom: targetCity.zoom
-      });
-      router.replace({ query: {} });
-    } else {
-      map.value.fitBounds(sanJustoBounds, {
-        padding: 55,
-        duration: 0
-      });
-    }
+  if (targetCity) {
+    map.value.jumpTo({
+      center: targetCity.center,
+      zoom: targetCity.zoom
+    });
+    router.replace({ query: {}, hash: route.hash });
+  } else {
+    map.value.fitBounds(sanJustoBounds, {
+      padding: 55,
+      duration: 0
+    });
   }
+}
 
   function addSanJustoBoundaryLayer() {
     map.value.addSource("san-justo", {

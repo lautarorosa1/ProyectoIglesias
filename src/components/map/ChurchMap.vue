@@ -1,5 +1,5 @@
 <template>
-  <section class="church-map-section section-gray">
+  <section id="mapa" class="church-map-section section-gray">
     <div class="church-map-head">
       <h1>Mapa de comunidades</h1>
       <p>Explorá las parroquias, iglesias y comunidades de la Diócesis de San Francisco.</p>
@@ -13,7 +13,7 @@
             :items="searchItems"
             :recent="recentSearches"
             @select="handleSelection"
-            @focus="closeActivePopup"
+            @focus="closeSidebar"
           />
 
           <button
@@ -29,6 +29,8 @@
             </svg>
           </button>
         </div>
+
+        <ChurchSidebar :church="selectedChurch" @close="closeSidebar" />
 
         <div class="map-container" :class="{ 'is-loading': mapLoading }">
           <div v-if="mapLoading" class="map-loading-overlay">
@@ -48,6 +50,7 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import SearchControl from "./SearchControl.vue";
+import ChurchSidebar from "./ChurchSideBar.vue";
 
 import { churches } from "../../data/churches";
 import { cities } from "../../data/cities";
@@ -62,7 +65,10 @@ const route = useRoute();
 const router = useRouter();
 
 const searchControl = ref(null);
-const activePopup = ref(null);
+
+// --- Sidebar / selección ---
+const selectedChurch = ref(null);
+let selectedMarker = null;
 
 // --- Búsqueda ---
 const { recentSearches, load: loadRecentSearches, save: saveSearch } =
@@ -83,54 +89,61 @@ const {
   onMapClick: () => searchControl.value?.close()
 });
 
-function closeActivePopup() {
-  if (activePopup.value) {
-    activePopup.value.remove();
-    activePopup.value = null;
-  }
-}
-
 // --- Markers y conectores ---
 // Nota sobre el orden: useChurchConnectors necesita el mismo Map de
 // churchMarkers que crea useChurchMarkers, pero useChurchMarkers necesita
-// los callbacks de popup que llaman a los métodos de connectors. Para
+// el callback onMarkerClick que llama a métodos de connectors. Para
 // resolver esa dependencia circular, declaramos `connectors` primero y
-// lo asignamos después de crear los markers; los callbacks solo se
-// ejecutan cuando el usuario abre/cierra un popup (mucho después de que
+// lo asignamos después de crear los markers; el callback solo se
+// ejecuta con un click real del usuario (mucho después de que
 // `connectors` ya esté asignado), así que el closure funciona bien.
 let connectors;
 
 const { churchMarkers, createMarkers, updateMarkersVisibility } =
   useChurchMarkers(map, churches, {
-    onPopupOpen: (church, marker, popup) => {
-      activePopup.value = popup;
-      connectors.handlePopupOpen(church, marker);
-    },
-    onPopupClose: (church, marker, popup) => {
-      if (activePopup.value === popup) {
-        activePopup.value = null;
-      }
-      connectors.handlePopupClose(church, marker);
-    }
+    onMarkerClick: selectChurch
   });
 
 connectors = useChurchConnectors(map, churchMarkers, churches);
 
-function resetToSanJusto() {
+function selectChurch(church, marker) {
+  // Click sobre la misma iglesia ya seleccionada -> cierra
+  if (selectedChurch.value?.id === church.id) {
+    closeSidebar();
+    return;
+  }
+
+  // Había otra seleccionada -> le sacamos highlight antes de cambiar
+  if (selectedChurch.value) {
+    connectors.handleDeselect(selectedChurch.value, selectedMarker);
+  }
+
+  selectedChurch.value = church;
+  selectedMarker = marker;
+  connectors.handleSelect(church, marker);
+}
+
+function closeSidebar() {
   searchControl.value?.close();
-  closeActivePopup();
+
+  if (selectedChurch.value) {
+    connectors.handleDeselect(selectedChurch.value, selectedMarker);
+  }
+
+  selectedChurch.value = null;
+  selectedMarker = null;
+}
+
+function resetToSanJusto() {
+  closeSidebar();
   resetMapToSanJusto();
 }
 
 function handleSelection(item) {
-
   if (!map.value) return;
 
   searchControl.value?.close();
-
   saveSearch(item);
-
-  closeActivePopup();
 
   map.value.flyTo({
     center: item.center,
@@ -139,8 +152,11 @@ function handleSelection(item) {
     essential: true
   });
 
-  // Si es ciudad no abre popup
-  if (item.type !== "church") return;
+  // Si es ciudad no abre sidebar
+  if (item.type !== "church") {
+    closeSidebar();
+    return;
+  }
 
   const churchId = item.church?.id;
 
@@ -156,10 +172,7 @@ function handleSelection(item) {
     return;
   }
 
-  marker.togglePopup();
-
-  // Ya no hace falta setear activePopup acá:
-  // el callback onPopupOpen (de useChurchMarkers) se encarga de eso.
+  selectChurch(item.church, marker);
 }
 
 onMounted(() => {
@@ -169,26 +182,13 @@ onMounted(() => {
     router.push(`/iglesias/${event.detail}`);
   });
 
+  // Ya no hace falta distinguir "click en marker" vs "click afuera":
+  // el click del marker hace stopPropagation en useChurchMarkers.js,
+  // así que si este handler se dispara, siempre es un click afuera
+  // (mapa vacío, o sobre el propio sidebar si no le pusiste stopPropagation ahí).
   mapContainer.value.addEventListener(
     "click",
-    event => {
-      const markerEl = event.target.closest(".church-marker");
-
-      if (markerEl) {
-        let clickedMarker = null;
-        churchMarkers.forEach(marker => {
-          if (marker.getElement() === markerEl) clickedMarker = marker;
-        });
-
-        // Si es el mismo marker del popup activo, dejamos que su propio
-        // toggle se encargue de cerrarlo (no interferimos).
-        if (clickedMarker && clickedMarker.popup === activePopup.value) {
-          return;
-        }
-      }
-
-      closeActivePopup();
-    },
+    () => closeSidebar(),
     true // fase de captura: corre antes que el click interno de maplibre
   );
 

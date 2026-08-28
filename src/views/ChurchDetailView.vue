@@ -38,6 +38,6 @@ const church = churches.find(
 );
 
 function goBack() {
-  router.push({ name: "map", query: { city: church.ciudad } });
+  router.push({ name: "home", hash: "#mapa", query: { city: church.ciudad } });
 }
 </script>
