@@ -1,5 +1,5 @@
 <template>
-  <section class="church-map-section">
+  <section class="church-map-section section-gray">
     <div class="church-map-head">
       <h1>Mapa de comunidades</h1>
       <p>Explorá las parroquias, iglesias y comunidades de la Diócesis de San Francisco.</p>
@@ -214,8 +214,6 @@ onMounted(() => {
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
-
-  background: var(--dio-stone-200);
   padding: 48px 24px;
 }
 

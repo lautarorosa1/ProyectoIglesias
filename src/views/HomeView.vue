@@ -7,7 +7,7 @@
     <TimelineSection />
     <BishopSection />
     <LookingForSection />
-    <ChurchMap />
+    <section id="mapa"><ChurchMap /></section>
   </main>
 </template>
 

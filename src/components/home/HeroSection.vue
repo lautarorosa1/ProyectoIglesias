@@ -13,7 +13,9 @@
         <button class="btn btn-primary" @click="scrollToId('movimiento')">
           Conocé la Diócesis
         </button>
-        
+        <button class="btn btn-secondary" @click="scrollToId('mapa')">
+          Ver el mapa
+        </button>
       </div>
     </div>
 
@@ -86,12 +88,20 @@ const { scrollToId } = useScrollToId();
   max-width: 560px;
   margin: 0 auto 36px;
 }
+
 .hero-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
+
+.hero-actions-divider-line {
+  width: 22px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
 .hero-scroll-cue {
   position: absolute;
   bottom: 26px;
@@ -122,7 +132,7 @@ const { scrollToId } = useScrollToId();
 
 @media (max-width: 640px) {
   .hero { min-height: 92vh; padding: 90px 18px 56px; }
-  .hero-actions { flex-direction: column; width: 100%; }
-  .hero-actions .btn { width: 100%; }
+  .hero-actions { width: 100%; }
+  .hero-actions .btn { width: 100%; max-width: 320px; }
 }
 </style>
