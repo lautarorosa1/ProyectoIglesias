@@ -118,8 +118,6 @@ export function useMapInstance({ cities, route, router, onMapClick }) {
       zoom: window.innerWidth < 768 ? 12 : 13
     });
 
-    map.value.addControl(new maplibregl.NavigationControl(), "top-right");
-
     if (onMapClick) {
       map.value.on("click", onMapClick);
     }

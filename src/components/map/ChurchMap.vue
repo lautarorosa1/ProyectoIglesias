@@ -6,7 +6,7 @@
     </div>
 
     <div class="map-card">
-      <div class="map-wrapper">
+      <div class="map-wrapper" :class="{ 'map-wrapper--fullscreen': isFullscreen }">
         <div class="controls-row">
           <SearchControl
             ref="searchControl"
@@ -30,6 +30,21 @@
           </button>
         </div>
 
+        <button
+          type="button"
+          class="fullscreen-button"
+          :aria-label="isFullscreen ? 'Salir de pantalla completa' : 'Ver mapa completo'"
+          :title="isFullscreen ? 'Salir de pantalla completa' : 'Ver mapa completo'"
+          @click="toggleFullscreen"
+        >
+          <svg v-if="!isFullscreen" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3" />
+          </svg>
+          <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3v3a2 2 0 0 1-2 2H4M15 3v3a2 2 0 0 0 2 2h3M9 21v-3a2 2 0 0 0-2-2H4M15 21v-3a2 2 0 0 1 2-2h3" />
+          </svg>
+        </button>
+
         <ChurchSidebar :church="selectedChurch" @close="closeSidebar" />
 
         <div class="map-container" :class="{ 'is-loading': mapLoading }">
@@ -46,7 +61,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import SearchControl from "./SearchControl.vue";
@@ -69,6 +84,35 @@ const searchControl = ref(null);
 // --- Sidebar / selección ---
 const selectedChurch = ref(null);
 let selectedMarker = null;
+
+// --- Pantalla completa ---
+const isFullscreen = ref(false);
+
+let savedScrollY = 0;
+
+function toggleFullscreen() {
+  isFullscreen.value = !isFullscreen.value;
+
+  if (isFullscreen.value) {
+    // Guardamos la posición antes de bloquear el scroll
+    savedScrollY = window.scrollY;
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+
+  // MapLibre no detecta solo el cambio de tamaño del contenedor,
+  // hay que forzarle el resize después de que el DOM se actualice.
+  nextTick(() => {
+    map.value?.resize();
+
+    // Recién acá, con el layout ya vuelto a la normalidad,
+    // restauramos el scroll exacto de antes de entrar a fullscreen.
+    if (!isFullscreen.value) {
+      window.scrollTo(0, savedScrollY);
+    }
+  });
+}
 
 // --- Búsqueda ---
 const { recentSearches, load: loadRecentSearches, save: saveSearch } =
@@ -213,6 +257,10 @@ onMounted(() => {
 
   createMarkers();
 });
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = "";
+});
 </script>
 
 <style scoped>
@@ -267,6 +315,23 @@ onMounted(() => {
   position: relative;
 }
 
+.map-wrapper--fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000; /* por encima de controls-row (9999) */
+  border-radius: 0;
+  background: var(--dio-white);
+  padding: 0;
+}
+
+.map-wrapper--fullscreen .map-container {
+  height: 100vh;
+  max-height: none;
+  min-height: 0;
+  border-radius: 0;
+  border: none;
+}
+
 .controls-row {
   position: absolute;
   top: 15px;
@@ -284,6 +349,11 @@ onMounted(() => {
   }
 
   .reset-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .fullscreen-button {
     width: 44px;
     height: 44px;
   }
@@ -309,6 +379,35 @@ onMounted(() => {
 }
 
 .reset-button:hover {
+  background: var(--dio-stone-50);
+}
+
+.fullscreen-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+
+  border-radius: 12px;
+  border: 0;
+  background: var(--dio-white);
+  color: var(--dio-primary-900);
+
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  box-shadow: 0 4px 15px rgba(58, 18, 32, 0.18);
+}
+
+.fullscreen-button:hover {
   background: var(--dio-stone-50);
 }
 
