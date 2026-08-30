@@ -13,7 +13,7 @@
             :items="searchItems"
             :recent="recentSearches"
             @select="handleSelection"
-            @focus="closeSidebar"
+            @focus="deselectChurch"
           />
 
           <button
@@ -123,15 +123,26 @@ function selectChurch(church, marker) {
   connectors.handleSelect(church, marker);
 }
 
-function closeSidebar() {
-  searchControl.value?.close();
-
+// Solo deselecciona la iglesia (saca highlight y cierra el sidebar),
+// sin tocar el buscador. Se usa en @focus de SearchControl: si acá
+// llamáramos a closeSidebar() completo, se generaría un loop (ver
+// handleFocus en SearchControl.vue), porque closeSidebar cierra el
+// buscador y eso volvería a disparar lógica sobre el propio control
+// que originó el evento.
+function deselectChurch() {
   if (selectedChurch.value) {
     connectors.handleDeselect(selectedChurch.value, selectedMarker);
   }
 
   selectedChurch.value = null;
   selectedMarker = null;
+}
+
+// Cierra todo: buscador + iglesia seleccionada. Para click afuera del
+// mapa, reset a San Justo, y selección de una ciudad en el buscador.
+function closeSidebar() {
+  searchControl.value?.close();
+  deselectChurch();
 }
 
 function resetToSanJusto() {
@@ -154,7 +165,7 @@ function handleSelection(item) {
 
   // Si es ciudad no abre sidebar
   if (item.type !== "church") {
-    closeSidebar();
+    deselectChurch();
     return;
   }
 

@@ -175,10 +175,52 @@ function close() {
 /* Aparición simple en el mismo lugar: solo fade, sin desplazamiento */
 .sidebar-fade-enter-active,
 .sidebar-fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: none;
 }
 .sidebar-fade-enter-from,
 .sidebar-fade-leave-to {
-  opacity: 0;
+  opacity: 1;
+}
+
+/* ===== MOBILE: bottom sheet estilo Google Maps ===== */
+@media (max-width: 640px) {
+  .church-sidebar {
+    inset: auto 0 0 0;
+    top: auto;
+    left: 0;
+    right: 0;
+
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 65vh;
+
+    padding: 20px 20px 24px;
+
+    border-right: none;
+    border-top: 1px solid rgba(20, 20, 30, 0.06);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+    box-shadow:
+      0 -1px 2px rgba(20, 20, 30, 0.04),
+      0 -8px 24px rgba(20, 20, 30, 0.10),
+      0 -16px 40px rgba(20, 20, 30, 0.06);
+  }
+
+  /* pequeño "handle" visual arriba, como en apps de mapas */
+  .church-sidebar::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(20, 20, 30, 0.18);
+  }
 }
 </style>
