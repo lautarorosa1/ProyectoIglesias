@@ -11,12 +11,27 @@ const router = createRouter({
     if (savedPosition) {
       return savedPosition;
     }
-    // Link con hash (ej: /#agenda): scroll suave al elemento,
-    // excepto al volver desde el detalle de iglesia, que salta directo
-    if (to.hash) {
-      const instant = from.name === "church-detail";
-      return { el: to.hash, behavior: instant ? "auto" : "smooth" };
+
+    // Volviendo del detalle de iglesia con ?city=...: ChurchMap.vue se
+    // encarga de hacer scroll a #mapa apenas se monta (onMounted), sin
+    // esperar a que el mapa termine de cargar. No dejamos que el router
+    // mueva el scroll acá, para no competir con eso.
+    if (to.name === "home" && to.query.city) {
+      return false;
     }
+
+    // El router.replace interno de useMapInstance (limpia ?city= después
+    // de usarlo) es una navegación home -> home. Tampoco debe tocar el
+    // scroll: dejamos la página donde ChurchMap ya la puso.
+    if (to.name === "home" && from.name === "home") {
+      return false;
+    }
+
+    // Link con hash (ej: /#agenda): scroll suave al elemento
+    if (to.hash) {
+      return { el: to.hash, behavior: "smooth" };
+    }
+
     // Cualquier otra navegación: arrancar arriba de la página
     return { top: 0 };
   },

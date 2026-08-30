@@ -79,6 +79,12 @@ import { useSearchIndex } from "../../composables/map/useSearchIndex";
 const route = useRoute();
 const router = useRouter();
 
+// Capturado ANTES de que setInitialView (dentro de useMapInstance) limpie
+// el query con router.replace. Si es true, significa que venimos de
+// "Volver al mapa" desde el detalle de una iglesia, y tenemos que
+// scrollear a esta sección una vez que el mapa termine de cargar.
+const cameFromChurchDetail = !!route.query.city;
+
 const searchControl = ref(null);
 
 // --- Sidebar / selección ---
@@ -231,6 +237,10 @@ function handleSelection(item) {
 }
 
 onMounted(() => {
+  if (cameFromChurchDetail) {
+      document.getElementById("mapa")?.scrollIntoView({ behavior: "auto", block: "start" });
+    }
+
   loadRecentSearches();
 
   window.addEventListener("church-route", event => {
@@ -488,4 +498,4 @@ onBeforeUnmount(() => {
     border-radius: 18px;
   }
 }
-</style>
+</style>  

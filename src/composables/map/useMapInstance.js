@@ -65,12 +65,18 @@ export function useMapInstance({ cities, route, router, onMapClick }) {
       center: targetCity.center,
       zoom: targetCity.zoom
     });
-    router.replace({ query: {}, hash: route.hash });
   } else {
     map.value.fitBounds(sanJustoBounds, {
       padding: 55,
       duration: 0
     });
+  }
+
+  // Limpiamos el query siempre que haya venido con ?city=, la hayamos
+  // encontrado o no — así nunca queda "pegado" en la URL, lo que
+  // rompería los reloads futuros (scrollBehavior lo detectaría de nuevo).
+  if (targetCityName) {
+    router.replace({ query: {}, hash: route.hash });
   }
 }
 
